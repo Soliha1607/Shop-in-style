@@ -1,0 +1,11 @@
+{% extends 'shop/home.html' %}
+
+{% block content %}
+    <h2>Update Product</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Save Changes</button>
+        <a href="{% url 'product_detail' product.id %}" class="btn btn-secondary">Cancel</a>
+    </form>
+{% endblock %}
