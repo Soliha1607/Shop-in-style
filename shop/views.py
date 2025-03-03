@@ -1,8 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
-from shop.models import Product, Category
-from shop.forms import ProductForm
+from shop.models import Product, Category, Comment
+from shop.forms import ProductForm, CommentForm
 
 
 def index(request, category_id=None):
@@ -22,7 +22,16 @@ def index(request, category_id=None):
 
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    return render(request, 'shop/detail.html', {'product': product})
+    comments = Comment.objects.filter(product=product).order_by('-created_at')
+    form = CommentForm(request.POST or None)
+
+    if request.method == 'POST' and form.is_valid():
+        comment = form.save(commit=False)
+        comment.product = product
+        comment.save()
+        return redirect('product_detail', product_id=product.id)
+
+    return render(request, 'shop/detail.html', {'product': product, 'comments': comments, 'form': form})
 
 
 @login_required(login_url='/admin/')
@@ -50,4 +59,10 @@ def product_delete(request, product_id):
     if request.method == 'POST':
         product.delete()
         return redirect('index')
-    return render(request, 'shop/product_confirm_delete.html', {'product': product})
+    return render(request, 'shop/product_create.html', {'product': product})
+
+
+def comment_list(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    comments = Comment.objects.filter(product=product).order_by('-created_at')
+    return render(request, 'shop/comments.html', {'product': product, 'comments': comments})

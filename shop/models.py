@@ -1,14 +1,13 @@
 from django.db import models
 from decimal import Decimal
 
-
 # Create your models here.
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+
     class Meta:
         abstract = True
-
 
 
 class Category(BaseModel):
@@ -22,6 +21,7 @@ class Category(BaseModel):
         verbose_name = 'category'
         verbose_name_plural = 'categories'
         ordering = ['-id']
+
 
 class Product(BaseModel):
     class RatingChoice(models.IntegerChoices):
@@ -55,6 +55,19 @@ class Product(BaseModel):
     def __str__(self):
         return self.name
 
-
     class Meta:
         db_table = 'product'
+
+
+class Comment(BaseModel):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="comments")
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
+    text = models.TextField()
+
+    def __str__(self):
+        return f"Comment by {self.name} on {self.product.name}"
+
+    class Meta:
+        db_table = 'comment'
+        ordering = ['-created_at']
