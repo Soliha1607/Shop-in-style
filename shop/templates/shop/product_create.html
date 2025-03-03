@@ -1,7 +1,6 @@
 {% extends 'shop/base/base.html' %}
 
-
-{% block product_update_content %}
+{% block product_create_content %}
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
@@ -10,8 +9,7 @@
                         <h4>Product {{ action }}</h4>
                     </div>
                     <div class="card-body">
-                        <form method="post" enctype="multipart/form-data"
-                              action="{% url 'product_update' product.id %}">
+                        <form method="post" enctype="multipart/form-data" action="{% url 'product_create' %}">
                             {% csrf_token %}
                             {{ form.as_p }}
                             <div class="text-center">

@@ -1,16 +1,29 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
+from django.db.models import Q
 from shop.models import Product, Category
 from shop.forms import ProductForm
 
+
 def index(request, category_id=None):
+    search_query = request.GET.get('q', '')
     categories = Category.objects.all()
-    products = Product.objects.filter(category_id=category_id) if category_id else Product.objects.all().order_by('-updated_at')
+
+    if category_id:
+        products = Product.objects.filter(category_id=category_id)
+    else:
+        products = Product.objects.all().order_by('-updated_at')
+
+    if search_query:
+        products = products.filter(Q(name__icontains=search_query) | Q(description__icontains=search_query))
+
     return render(request, 'shop/home.html', {'products': products, 'categories': categories})
+
 
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     return render(request, 'shop/detail.html', {'product': product})
+
 
 @login_required(login_url='/admin/')
 def product_create(request):
@@ -19,6 +32,7 @@ def product_create(request):
         form.save()
         return redirect('index')
     return render(request, 'shop/add-product.html', {'form': form})
+
 
 @login_required(login_url='/admin/')
 def product_update(request, product_id):
@@ -29,6 +43,7 @@ def product_update(request, product_id):
         return redirect('product_detail', product_id=product.id)
     return render(request, 'shop/product_update.html', {'form': form, 'product': product})
 
+
 @login_required(login_url='/admin/')
 def product_delete(request, product_id):
     product = get_object_or_404(Product, id=product_id)
@@ -36,4 +51,3 @@ def product_delete(request, product_id):
         product.delete()
         return redirect('index')
     return render(request, 'shop/product_confirm_delete.html', {'product': product})
-
