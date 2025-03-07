@@ -66,3 +66,25 @@ def comment_list(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     comments = Comment.objects.filter(product=product).order_by('-created_at')
     return render(request, 'shop/comments.html', {'product': product, 'comments': comments})
+
+
+def comment_view(request, pk):
+    product = Product.objects.get(id=pk)
+    form = CommentForm()
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            rating = request.POST.get('rating')
+            print(type(rating))
+            comment.rating = rating
+            comment.product = product
+            comment.save()
+            return redirect('product_detail', product.id)
+
+    context = {
+        'form': form,
+        'product': product
+    }
+
+    return render(request, 'shop/detail.html', context)

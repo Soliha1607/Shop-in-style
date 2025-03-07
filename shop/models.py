@@ -60,13 +60,22 @@ class Product(BaseModel):
 
 
 class Comment(BaseModel):
+    class RatingChoice(models.IntegerChoices):
+        ONE = 1
+        TWO = 2
+        THREE = 3
+        FOUR = 4
+        FIVE = 5
+
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="comments")
     name = models.CharField(max_length=255)
     email = models.EmailField()
     text = models.TextField()
+    rating = models.PositiveIntegerField(choices=RatingChoice.choices, default=RatingChoice.ONE.value)
 
     def __str__(self):
-        return f"Comment by {self.name} on {self.product.name}"
+        return f'{self.email} => {self.rating} => {self.product.name}'
+
 
     class Meta:
         db_table = 'comment'
