@@ -1,0 +1,33 @@
+body {
+    background-color: black !important;
+    color: lime !important;
+}
+
+div.breadcrumbs {
+    background-color: black !important;
+    color: lime !important;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+h1, h2, h3 {
+    color: lime !important;
+}
+
+input, select, textarea {
+    background-color: black !important;
+    color: lime !important;
+    border: 1px solid lime !important;
+}
+
+.button, .submit-row input {
+    background-color: black !important;
+    color: lime !important;
+    border: 1px solid lime !important;
+}
+
+.button:hover, .submit-row input:hover {
+    background-color: lime !important;
+    color: black !important;
+}

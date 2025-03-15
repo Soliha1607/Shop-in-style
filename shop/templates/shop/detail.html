@@ -1,0 +1,230 @@
+{% extends 'shop/base/base.html' %}
+{% load static %}
+
+{% block title %}
+    Product Detail
+{% endblock %}
+
+{% block product_detail_content %}
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="row gx-4 gx-lg-5 align-items-center">
+                <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="{{ product.get_absolute_url }}"
+                                           alt="..."/></div>
+                <div class="col-md-6">
+                    <div>
+                        {% if user.is_authenticated %}
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#deleteModal">
+                                Delete
+                            </button>
+                            <!-- Delete Confirmation Modal -->
+                            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <form method="post" action="{% url 'product_delete' product.id %}">
+
+                                            <div class="modal-body">
+                                                Are you sure you want to delete <strong>{{ product.name }}</strong>?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Cancel
+                                                </button>
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <a href="{% url 'product_update' product.id %}">
+                                <button type="button" class="btn btn-outline-warning">Update</button>
+                            </a>
+                        {% endif %}
+                    </div>
+                    <div class="small mb-1"><h3>Quantity : {{ product.quantity }}</h3></div>
+                    <h1 class="display-5 fw-bolder">{{ product.name }}</h1>
+                    <div class="fs-5 mb-5">
+                        {% if product.discount %}
+                            <span class="text-muted text-decoration-line-through">
+                                    ${{ product.price }}
+                                    </span>
+                            ${{ product.discounted_price }}
+                        {% else %}
+                            ${{ product.price }}
+                        {% endif %}
+                    </div>
+                    <p class="lead">{{ product.description }}</p>
+                    <div class="d-flex">
+                        <form method="post" action="{% url 'order_view' product.id %}">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <h2>Place an order</h2>
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="formGroupExampleInput">Your name</label>
+                                <input type="text" class="form-control" name="full_name" placeholder="Your name">
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="formGroupExampleInput2">Your phone</label>
+                                <input type="text" name="phone" class="form-control" placeholder="Your phone">
+                            </div>
+                             <div class="form-group mb-3">
+                                {% if form.phone.errors %}
+                                    <div class="text-danger">
+                                        {{ form.phone.errors }}
+                                    </div>
+                                {% endif %}
+                             </div>
+                             <div class="form-group mb-3">
+                                <label for="formGroupExampleInput2">Quantity</label>
+                                <input type="number" name="quantity" class="form-control" placeholder="Quantity">
+                            </div>
+
+
+                            <div class="form-group mb-3">
+                                <input type="submit" class="btn btn-success" value="Send">
+                            </div>
+                            <div class="form-group mb-3">
+                               {% if messages %}
+                                    <div class="messages">
+                                        {% for message in messages %}
+                                            <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% endif %}">
+                                                {{ message }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container mt-4 mb-4">
+         <div class="row">
+             <div class="col-12">
+                 <div class="text-center">
+                     <h2>Latest comments</h2>
+                  </div>
+
+                 {% for comment in comments %}
+                     <div class="media card p-4 mt-2">
+                          <div class="media-body">
+                              <h3 class="mt-0">{{ comment.name }}</h3>
+                              <p>{{ comment.text }}</p>
+                              <small class="text-muted">{{ comment.created_at }}</small>
+                          </div>
+                     </div>
+                 {% empty %}
+                     <p class="text-center">No comments yet. Be the first to comment!</p>
+                 {% endfor %}
+             </div>
+
+             <div class="col-8 offset-2 mt-5">
+                  <div class="p-5">
+                      <div class="text-center">
+                          <h3>Add Comment</h3>
+                      </div>
+
+                      <form method="POST">
+                          {% csrf_token %}
+                          <div class="form-group mb-3">
+                              <label for="rating">Rating: </label>
+                              <select id="rating" name="rating">
+                                <option value="1">⭐ (1)</option>
+                                <option value="2">⭐⭐ (2)</option>
+                                <option value="3">⭐⭐⭐ (3)</option>
+                                <option value="4">⭐⭐⭐⭐ (4)</option>
+                                <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                              </select>
+                          </div>
+                          <div class="form-group mb-3">
+                              <label for="name">Your name</label>
+                              <input type="text" class="form-control" name="name" placeholder="Your name" required>
+                          </div>
+
+                          <div class="form-group mb-3">
+                              <label for="email">Your email</label>
+                              <input type="email" class="form-control" name="email" placeholder="Your email" required>
+                          </div>
+                          <div class="form-group mb-3">
+                              <label for="text">Your comment</label>
+                              <textarea name="text" class="form-control" cols="30" rows="5" required></textarea>
+                          </div>
+
+                          <div class="form-group mb-3">
+                              <button type="submit" class="btn btn-success">Send</button>
+                          </div>
+                      </form>
+                  </div>
+             </div>
+         </div>
+    </div>
+
+    <section class="py-5 bg-light">
+        <div class="container px-4 px-lg-5 mt-5">
+            <h2 class="fw-bolder mb-4">Related products</h2>
+            <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                {% for product in related_products %}
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Sale badge-->
+                            {% if product.discount %}
+                                <div class="badge bg-dark text-white position-absolute"
+                                     style="top: 0.5rem; right: 0.5rem">
+                                    Sale
+                                </div>
+                            {% endif %}
+                            <!-- Product image-->
+                            <img class="card-img-top" src="{{ product.get_absolute_url }}" alt="..."/>
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">{{ product.name }}</h5>
+                                    <!-- Product reviews-->
+                                    <div>
+                                        <h5>rating : {{ product.comment_rating }}</h5>
+                                    </div>
+                                    <!-- Product price-->
+                                    {% if product.discount %}
+                                        <span class="text-muted text-decoration-line-through">
+                                    ${{ product.price }}
+                                    </span>
+                                        ${{ product.discounted_price }}
+                                    {% else %}
+                                        ${{ product.price }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <!-- Product actions-->
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto"
+                                                            href="{% url 'product_detail' product.id %}">View
+                                    product</a></div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    </section>
+
+
+{% endblock %}
