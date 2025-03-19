@@ -6,6 +6,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    my_order = models.PositiveIntegerField(null=True, blank=True, default=0)
 
     class Meta:
         abstract = True
