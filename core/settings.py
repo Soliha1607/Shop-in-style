@@ -37,8 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'shop',
+
+    'shop.apps.ShopConfig',
     'phonenumber_field',
+    'adminsortable2',
+    'import_export',
+    'users.apps.UsersConfig',
+    'jazzmin',
 ]
 
 MIDDLEWARE = [
@@ -56,7 +61,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
+        'DIRS': [BASE_DIR / 'shop/templates']
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -102,6 +107,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'users.backends.EmailBackend',  # Email orqali autentifikatsiya qilish
+    'django.contrib.auth.backends.ModelBackend',  # Default Django autentifikatsiyasi
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -119,7 +128,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'shop/static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'shop/static'),
+]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'shop/media')
@@ -128,3 +140,64 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'shop/media')
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+JAZZMIN_SETTINGS = {
+    "site_title": "MyBrand Admin",
+    "site_header": "MyBrand",
+    "site_brand": "MyBrand",
+    "welcome_sign": "Xush kelibsiz, Admin!",
+    "show_ui_builder": False,
+    "theme": "darkly",
+    "custom_css": "css/dark-mode.css",
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar": "navbar-dark bg-black",
+    "sidebar": "sidebar-dark-primary",
+    "actions_sticky_top": True,
+}
+
+
+JAZZMIN_SETTINGS["icons"] = {
+    "auth": "fas fa-user-shield",
+    "auth.Group": "fas fa-users",
+    "shop.Product": "fas fa-box",
+    "shop.Category": "fas fa-list",
+}
+
+
+AUTH_USER_MODEL = "users.CustomUser"
+
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000']
+
+import logging
+import smtplib
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "solihapahridinova@gmail.com"
+EMAIL_HOST_PASSWORD = "kesyrhgteczkopvt"
+
+EMAIL_DEBUG = True
+EMAIL_TIMEOUT = 30
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'mail_admins': {
+            'level': 'DEBUG',
+            'class': 'django.utils.log.AdminEmailHandler',
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}

@@ -1,10 +1,8 @@
 {% extends 'shop/base/base.html' %}
-{% load register_tags %}
+
 {% load static %}
 
-
 {% block title %}Home Page{% endblock %}
-
 
 {% block home_content %}
     <header class="bg-dark py-5">
@@ -15,7 +13,7 @@
             </div>
         </div>
     </header>
-
+    <!-- Section-->
 
     <div class="container mt-5">
         <div class="text-left">
@@ -25,30 +23,32 @@
             <div class="col-1">
                 <a class="btn btn-outline-dark mt-auto" href="?filter=expensive"> Expensive </a>
             </div>
+
             <div class="col-1">
                 <a class="btn btn-outline-dark mt-auto" href="?filter=cheap"> Cheap </a>
             </div>
+
             <div class="col-1">
                 <a class="btn btn-outline-dark mt-auto" href="?filter=rating"> Rating </a>
             </div>
 
-            {% if user.is_superuser %}
-                <div class="col-1">
-                    <a href="{% url 'product_create' %}">
-                        <button type="submit" class="btn btn-outline-success">
-                            Add Product
-                        </button>
-                    </a>
-                </div>
-            {% endif %}
+        {% if 'default' in request.GET %}
+            <div class="col-1">
+                <a class="btn btn-success mt-auto" href="{% url 'shop:product_create' %}">Add Product</a>
+            </div>
+        {% else %}
+            <div class="col-1">
+                <a class="btn btn-outline-dark mt-auto" href="?default=true"> Default </a>
+            </div>
+        {% endif %}
+
 
         </div>
     </div>
-
     <section class="py-5">
         <div class="container px-4 px-lg-5 mt-5">
             <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-                {% for product in products %}
+                {% for product in page_obj %}
                     <div class="col mb-5">
                         <div class="card h-100">
                             <!-- Sale badge-->
@@ -66,16 +66,14 @@
                                     <!-- Product name-->
                                     <h5 class="fw-bolder">{{ product.name }}</h5>
                                     <!-- Product reviews-->
-                                    <div class="d-flex justify-content-center small text-warning mb-2">
-                                        {% for _ in product.rating|get_range %}
-                                            <div class="bi-star-fill"></div>
-                                        {% endfor %}
+                                    <div>
+                                        <h5>rating : {{ product.comment_rating }}</h5>
                                     </div>
                                     <!-- Product price-->
                                     {% if product.discount %}
                                         <span class="text-muted text-decoration-line-through">
-                                    ${{ product.price }}
-                                    </span>
+                                            ${{ product.price }}
+                                        </span>
                                         ${{ product.discounted_price }}
                                     {% else %}
                                         ${{ product.price }}
@@ -85,15 +83,32 @@
                             <!-- Product actions-->
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                 <div class="text-center"><a class="btn btn-outline-dark mt-auto"
-                                                            href="{% url 'product_detail' product.id %}">View
+                                                            href="{% url 'shop:product_detail' product.id %}">View
                                     product</a></div>
-
-
                             </div>
                         </div>
                     </div>
                 {% endfor %}
 
+            </div>
+        </div>
+        <div>
+            <div class="pagination h-100 d-flex align-items-center justify-content-center">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1">&laquo; first</a>
+                        <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                    {% endif %}
+
+                    <span class="current">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                    </span>
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">next</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                    {% endif %}
+                </span>
             </div>
         </div>
     </section>

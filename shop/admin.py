@@ -1,17 +1,17 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
 from django.utils.html import format_html
-from adminsortable2.admin import SortableAdminMixin
+# from adminsortable2.admin import SortableAdminMixin
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 from shop.models import Product, Category, Comment
 
 # Register your models here.
 
-
+#
 # admin.site.register(Product)
 # admin.site.register(Category)
-# admin.site.register(Comment)
+admin.site.register(Comment)
 
 admin.site.unregister(Group)
 
