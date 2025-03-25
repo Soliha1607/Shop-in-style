@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'import_export',
     'users.apps.UsersConfig',
     'jazzmin',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -107,10 +108,35 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTHENTICATION_BACKENDS = [
-    'users.backends.EmailBackend',  # Email orqali autentifikatsiya qilish
-    'django.contrib.auth.backends.ModelBackend',  # Default Django autentifikatsiyasi
-]
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.auth_allowed',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.user.create_user',  # <-- Foydalanuvchi yaratish
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+)
+
+AUTHENTICATION_BACKENDS = (
+    'users.backends.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.github.GithubOAuth2',
+)
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '1028837248768-t9b3eq230cuq57s2grfcb3s226tplnn6.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+
+SOCIAL_AUTH_GITHUB_KEY = 'Ov23liAPUexojHuUEGGK'
+SOCIAL_AUTH_GITHUB_SECRET = '3ced3900c01002e45cbb5bb7bbe4f55026fcb169'
+
+LOGIN_REDIRECT_URL = '/shop/home/'
+LOGOUT_REDIRECT_URL = '/'
+
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -179,7 +205,7 @@ EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 EMAIL_PORT = 587
 EMAIL_HOST_USER = "solihapahridinova@gmail.com"
-EMAIL_HOST_PASSWORD = "kesyrhgteczkopvt"
+EMAIL_HOST_PASSWORD = "kesy rhgt eczk opvt"
 
 EMAIL_DEBUG = True
 EMAIL_TIMEOUT = 30
