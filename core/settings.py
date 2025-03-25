@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-tis%zo76l-zcjsy^t7@54(%*0jn1vn(v$i9-h55+p72n^i-(is'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -127,11 +128,11 @@ AUTHENTICATION_BACKENDS = (
     'social_core.backends.github.GithubOAuth2',
 )
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '1028837248768-t9b3eq230cuq57s2grfcb3s226tplnn6.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 
-SOCIAL_AUTH_GITHUB_KEY = 'Ov23liAPUexojHuUEGGK'
-SOCIAL_AUTH_GITHUB_SECRET = '3ced3900c01002e45cbb5bb7bbe4f55026fcb169'
+SOCIAL_AUTH_GITHUB_KEY = os.getenv('SOCIAL_AUTH_GITHUB_KEY')
+SOCIAL_AUTH_GITHUB_SECRET = os.getenv('SOCIAL_AUTH_GITHUB_SECRET')
 
 LOGIN_REDIRECT_URL = '/shop/home/'
 LOGOUT_REDIRECT_URL = '/'
@@ -205,7 +206,7 @@ EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 EMAIL_PORT = 587
 EMAIL_HOST_USER = "solihapahridinova@gmail.com"
-EMAIL_HOST_PASSWORD = "kesy rhgt eczk opvt"
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 EMAIL_DEBUG = True
 EMAIL_TIMEOUT = 30
