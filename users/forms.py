@@ -61,3 +61,9 @@ class RegisterModelForm(forms.ModelForm):
             user.save()
         return user
 
+    def clean_confirm_password(self):
+        confirm_password = self.cleaned_data.get('confirm_password')
+        password = self.cleaned_data.get('password')
+        if password != confirm_password:
+            raise forms.ValidationError(f'Password don\'t match')
+        return confirm_password
